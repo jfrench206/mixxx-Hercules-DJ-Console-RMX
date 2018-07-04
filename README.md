@@ -6,7 +6,7 @@ Copy the file "Hercules-DJ-Console-RMX-hid-scripts.js" into your Mixxx controlle
 
 Note: if you're already using a previous version of the mapping, rename that file to something else, like "Hercules-DJ-Console-RMX-hid-scripts-old.js"
 
-## Documentation:
+## Documentation
 As in previous versions of this mapping file, Keys 1-4 set hotcues, 5 and 6 set loop begin and end points. The scratch function works, and you can "nudge" playing decks with the jog wheels when scratch is off.
 
 Updated for Mixxx 2.1:
