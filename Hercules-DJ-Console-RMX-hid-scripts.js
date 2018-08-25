@@ -67,7 +67,15 @@ RMX.init = function() {
     }
   });
 
+  c.capture("play_indicator", "all", function(g, e, v) {
+    engine.setValue(g, e, v);
+  });
+
   c.capture("cue_default", "all", function(g, e, v) {
+    engine.setValue(g, e, v);
+  });
+
+  c.capture("cue_indicator", "all", function(g, e, v) {
     engine.setValue(g, e, v);
   });
 
@@ -279,9 +287,13 @@ RMX.init = function() {
 
   // led feedback
   c.feedback("[Channel1]", "play",        pipe);
+  c.feedback("[Channel1]", "play_indicator",        pipe);
   c.feedback("[Channel2]", "play",        pipe);
+  c.feedback("[Channel2]", "play_indicator",        pipe);
   c.feedback("[Channel1]", "cue_default", pipe);
+  c.feedback("[Channel1]", "cue_indicator", pipe);
   c.feedback("[Channel2]", "cue_default", pipe);
+  c.feedback("[Channel2]", "cue_indicator", pipe);
   c.feedback("[Channel1]", "beatsync",    pipe);
   c.feedback("[Channel2]", "beatsync",    pipe);
 
@@ -516,22 +528,33 @@ RMX.define_hid_format = function() {
   pid = 0x00;
   c.cache_out[pid] = [ pid, 0x0, 0x0, 0x0 ];
 
-  c.add_control(pid, "scratch",       "[Master]",   "led", 1, 0x01); // blinking: 3, 0x2
-  c.add_control(pid, "play",          "[Channel1]", "led", 1, 0x02); // blinking: 3, 0x2
-  c.add_control(pid, "cue_default",   "[Channel1]", "led", 1, 0x04);
+  // Last argument (hex) selects which LED, the integer before selects deck - figured out by RichterSkala
+  // But I (Jesse) can't figure out how to make rhem blink! Says it's supported by controller's MIDI implementation...
+  // but HID != MIDI
+  //
+  // Forum user 'neale' suggests 'try twiddling the value you send to the control and the control number',
+  // but I can't figure out how to do that here.
+  //
+  // However, I switched to "play_indicator" and "cue_indicator" instead of "play" and "cue_default" respectively,
+  // and original blinking play button issue appears to be fixed...there is now some response to changing cue mode in Mixxx prefs
+  // - Jesse
+
+  c.add_control(pid, "scratch",       "[Master]",   "led", 1, 0x01); 
+  c.add_control(pid, "play_indicator","[Channel1]", "led", 1, 0x02); 
+  c.add_control(pid, "cue_indicator", "[Channel1]", "led", 1, 0x04);
   c.add_control(pid, "headphone_cue", "[Channel1]", "led", 1, 0x08);
   c.add_control(pid, "source",        "[Channel1]", "led", 1, 0x10);
   c.add_control(pid, "beatsync",      "[Channel1]", "led", 1, 0x20);
   c.add_control(pid, "beatlock",      "[Channel1]", "led", 1, 0x40);
   c.add_control(pid, "pitch_reset",   "[Channel1]", "led", 1, 0x80);
 
-  c.add_control(pid, "play",          "[Channel2]", "led", 2, 0x02); // blinking: 2, 0x02
-  c.add_control(pid, "cue_default",   "[Channel2]", "led", 2, 0x04); // blinking: 2, 0x04
-  c.add_control(pid, "headphone_cue", "[Channel2]", "led", 2, 0x08); // blinking: 2, 0x08
+  c.add_control(pid, "play_indicator","[Channel2]", "led", 2, 0x02);
+  c.add_control(pid, "cue_indicator", "[Channel2]", "led", 2, 0x04);
+  c.add_control(pid, "headphone_cue", "[Channel2]", "led", 2, 0x08);
   c.add_control(pid, "source",        "[Channel2]", "led", 2, 0x10);
-  c.add_control(pid, "beatsync",      "[Channel2]", "led", 2, 0x20); // blinking: 2, 0x20
-  c.add_control(pid, "beatlock",      "[Channel2]", "led", 2, 0x80); // blinking: 2, 0x80
-  c.add_control(pid, "pitch_reset",   "[Channel2]", "led", 2, 0x40); // blinking: 2, 0x40
+  c.add_control(pid, "beatsync",      "[Channel2]", "led", 2, 0x20);
+  c.add_control(pid, "beatlock",      "[Channel2]", "led", 2, 0x80);
+  c.add_control(pid, "pitch_reset",   "[Channel2]", "led", 2, 0x40);
 
 };
 
